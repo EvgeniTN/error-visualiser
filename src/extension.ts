@@ -24,19 +24,21 @@ function getPythonErrors(pythonScriptPath: string): Promise<string[]> {
 	});
 }
 
-function getWebviewContent() {
+function getWebviewContent(errors: string[]) {
 	return `<!DOCTYPE html>
-	<html lang="en">
-	<head>
-	  <meta charset="UTF-8">
-	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	  <title>Error Visualiser</title>
-	</head>
-	<body>
-	  <h1>Hello from Error Visualiser!</h1>
-	  <p>This</p>
-	</body>
-	</html>`;
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Error Visualiser</title>
+    </head>
+    <body>
+      <h1>Error Visualiser</h1>
+      <ul>
+        ${errors.map((error) => `<li>${error}</li>`).join("")}
+      </ul>
+    </body>
+    </html>`;
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -53,15 +55,15 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.ViewColumn.One,
 				{}
 			);
-
-			panel.webview.html = getWebviewContent();
-
 			getPythonErrors("/Users/evgeninikolov/Developer/test/main.py")
 				.then((errors) => {
-					vscode.window.showInformationMessage(`${errors}`);
+					panel.webview.html = getWebviewContent(errors);
 				})
 				.catch((err) => {
 					console.error("Failed to get Python errors:", err);
+					panel.webview.html = getWebviewContent([
+						`Failed to get Python errors: ${err.message}`,
+					]);
 				});
 		}
 	);
