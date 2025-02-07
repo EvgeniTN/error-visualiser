@@ -1,10 +1,11 @@
 const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
 	mode: "production",
 	entry: "./src/webview/index.tsx",
 	output: {
-		path: path.resolve(__dirname, "out/webview"),
+		path: path.resolve(__dirname, "dist"),
 		filename: "bundle.js",
 	},
 	resolve: {
@@ -19,4 +20,9 @@ module.exports = {
 			},
 		],
 	},
+	plugins: [
+		new HtmlWebpackPlugin({
+			template: "./src/webview/index.html",
+		}),
+	],
 };

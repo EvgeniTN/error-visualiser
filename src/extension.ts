@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { spawn } from "child_process";
-import { getWebviewContent } from "./webviewContent";
+import * as path from "path";
+import * as fs from "fs";
 
 function getPythonErrors(pythonScriptPath: string): Promise<string[]> {
 	return new Promise((resolve, reject) => {
@@ -25,21 +26,6 @@ function getPythonErrors(pythonScriptPath: string): Promise<string[]> {
 	});
 }
 
-// function getWebviewContent() {
-// 	return `<!DOCTYPE html>
-// 	<html lang="en">
-// 	<head>
-// 	  <meta charset="UTF-8">
-// 	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-// 	  <title>Error Visualiser</title>
-// 	</head>
-// 	<body>
-// 	  <h1>Hello from Error Visualiser!</h1>
-// 	  <p>This</p>
-// 	</body>
-// 	</html>`;
-// }
-
 export function activate(context: vscode.ExtensionContext) {
 	console.log(
 		'Congratulations, your extension "error-visualiser" is now active!'
@@ -47,25 +33,39 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let disposable = vscode.commands.registerCommand(
 		"error-visualiser.errorView",
-		() => {
+		async () => {
 			// Create and show a new webview panel
 			const panel = vscode.window.createWebviewPanel(
 				"errorVisualiser",
 				"Error Visualiser",
 				vscode.ViewColumn.One,
-				{}
+				{
+					enableScripts: true,
+					localResourceRoots: [
+						vscode.Uri.file(path.join(context.extensionPath, "dist")),
+					],
+				}
 			);
 
-			// Set the webview's HTML content
-			panel.webview.html = getWebviewContent();
+			const htmlPath = vscode.Uri.file(
+				path.join(context.extensionPath, "dist", "index.html")
+			);
+			const htmlContent = fs.readFileSync(htmlPath.fsPath, "utf8");
 
-			getPythonErrors("/Users/evgeninikolov/Developer/test/main.py")
-				.then((errors) => {
-					vscode.window.showInformationMessage(`${errors}`);
-				})
-				.catch((err) => {
-					console.error("Failed to get Python errors:", err);
-				});
+			// Update the HTML content to use WebView URIs for local resources
+			const scriptUri = panel.webview.asWebviewUri(
+				vscode.Uri.file(path.join(context.extensionPath, "dist", "bundle.js"))
+			);
+			const updatedHtmlContent = htmlContent.replace(
+				"</body>",
+				`<script src="${scriptUri}"></script></body>`
+			);
+
+			panel.webview.html = updatedHtmlContent;
+
+			const pythonScriptPath = "/Users/evgeninikolov/Developer/test/main.py";
+			const errors = await getPythonErrors(pythonScriptPath);
+			panel.webview.postMessage(errors);
 		}
 	);
 
