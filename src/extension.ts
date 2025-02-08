@@ -1,30 +1,6 @@
 import * as vscode from "vscode";
-import { spawn } from "child_process";
 import * as path from "path";
 import * as fs from "fs";
-
-function getPythonErrors(pythonScriptPath: string): Promise<string[]> {
-	return new Promise((resolve, reject) => {
-		const errors: string[] = [];
-		const pythonProcess = spawn("python3", [pythonScriptPath]);
-
-		pythonProcess.stderr.on("data", (data) => {
-			errors.push(data.toString());
-		});
-
-		pythonProcess.on("close", (code) => {
-			if (code !== 0) {
-				resolve(errors);
-			} else {
-				resolve([]);
-			}
-		});
-
-		pythonProcess.on("error", (err) => {
-			reject(err);
-		});
-	});
-}
 
 export function activate(context: vscode.ExtensionContext) {
 	console.log(
@@ -63,11 +39,34 @@ export function activate(context: vscode.ExtensionContext) {
 
 			panel.webview.html = updatedHtmlContent;
 
-			const pythonScriptPath = "/Users/evgeninikolov/Developer/test/main.py";
-			const errors = await getPythonErrors(pythonScriptPath);
-			panel.webview.postMessage(errors);
+			// const pythonScriptPath = "/Users/evgeninikolov/Developer/test/main.py";
+			// const errors = await getPythonErrors(pythonScriptPath);
+			// panel.webview.postMessage(errors);
 		}
 	);
+
+	// function getPythonErrors(pythonScriptPath: string): Promise<string[]> {
+	// 	return new Promise((resolve, reject) => {
+	// 		const errors: string[] = [];
+	// 		const pythonProcess = spawn("python3", [pythonScriptPath]);
+
+	// 		pythonProcess.stderr.on("data", (data) => {
+	// 			errors.push(data.toString());
+	// 		});
+
+	// 		pythonProcess.on("close", (code) => {
+	// 			if (code !== 0) {
+	// 				resolve(errors);
+	// 			} else {
+	// 				resolve([]);
+	// 			}
+	// 		});
+
+	// 		pythonProcess.on("error", (err) => {
+	// 			reject(err);
+	// 		});
+	// 	});
+	// }
 
 	context.subscriptions.push(disposable);
 }
