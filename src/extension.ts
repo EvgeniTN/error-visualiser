@@ -1,11 +1,25 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs";
+import { spawn, ChildProcess } from "child_process";
+
+let serverProcess: ChildProcess | null = null;
 
 export function activate(context: vscode.ExtensionContext) {
 	console.log(
 		'Congratulations, your extension "error-visualiser" is now active!'
 	);
+
+	const serverProcess = spawn(
+		"node",
+		[path.join(context.extensionPath, "server.js")],
+		{
+			detached: true,
+			stdio: "ignore",
+		}
+	);
+
+	serverProcess.unref();
 
 	let disposable = vscode.commands.registerCommand(
 		"error-visualiser.errorView",
@@ -71,4 +85,8 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(disposable);
 }
 
-export function deactivate() {}
+export function deactivate() {
+	if (serverProcess) {
+		serverProcess.kill();
+	}
+}
