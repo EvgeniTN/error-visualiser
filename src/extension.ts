@@ -46,42 +46,19 @@ export function activate(context: vscode.ExtensionContext) {
 			const scriptUri = panel.webview.asWebviewUri(
 				vscode.Uri.file(path.join(context.extensionPath, "dist", "bundle.js"))
 			);
-			const updatedHtmlContent = htmlContent.replace(
-				"</body>",
-				`<script src="${scriptUri}"></script></body>`
+			const styleUri = panel.webview.asWebviewUri(
+				vscode.Uri.file(path.join(context.extensionPath, "dist", "styles.css"))
 			);
+			const updatedHtmlContent = htmlContent
+				.replace(
+					"</head>",
+					`<link href="${styleUri}" rel="stylesheet" /></head>`
+				)
+				.replace("</body>", `<script src="${scriptUri}"></l></body>`);
 
 			panel.webview.html = updatedHtmlContent;
-
-			// const pythonScriptPath = "/Users/evgeninikolov/Developer/test/main.py";
-			// const errors = await getPythonErrors(pythonScriptPath);
-			// panel.webview.postMessage(errors);
 		}
 	);
-
-	// function getPythonErrors(pythonScriptPath: string): Promise<string[]> {
-	// 	return new Promise((resolve, reject) => {
-	// 		const errors: string[] = [];
-	// 		const pythonProcess = spawn("python3", [pythonScriptPath]);
-
-	// 		pythonProcess.stderr.on("data", (data) => {
-	// 			errors.push(data.toString());
-	// 		});
-
-	// 		pythonProcess.on("close", (code) => {
-	// 			if (code !== 0) {
-	// 				resolve(errors);
-	// 			} else {
-	// 				resolve([]);
-	// 			}
-	// 		});
-
-	// 		pythonProcess.on("error", (err) => {
-	// 			reject(err);
-	// 		});
-	// 	});
-	// }
-
 	context.subscriptions.push(disposable);
 }
 

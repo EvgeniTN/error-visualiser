@@ -7,7 +7,7 @@ const port = 3003;
 app.use(cors());
 
 app.get("/run-python", (req, res) => {
-	const pythonScriptPath = "/Users/evgeninikolov/Developer/test/main.py";
+	const pythonScriptPath = req.query.scriptPath;
 	const pythonProcess = spawn("python3", [pythonScriptPath]);
 
 	let errors = [];

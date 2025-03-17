@@ -1,0 +1,54 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	background-color: #2f2f2f;
+}
+
+h1 {
+	margin: auto;
+	text-align: center;
+	padding: 1rem;
+}
+
+button {
+	padding: 0.5rem 1rem;
+	display: block;
+	border: none;
+	background-color: #ff6f00;
+}
+
+code {
+	margin-top: 1rem;
+	white-space: pre-wrap;
+	border-radius: 5px;
+	width: 100%;
+}
+
+.fileList ul {
+	display: flex;
+	flex-wrap: wrap;
+	list-style: none;
+	gap: 2px;
+}
+
+.file {
+	color: white;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+}
+
+.file button {
+	background-color: transparent;
+	padding: 1rem;
+	background-color: #2b2b2b;
+	color: white;
+}
+
+.file button:hover {
+	background-color: #0000003a;
+}
