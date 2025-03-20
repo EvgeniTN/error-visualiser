@@ -1,10 +1,11 @@
-import React, { use, useState } from "react";
+import React, { use, useState, useEffect } from "react";
 import "./styles.css";
 
 const App: React.FC = () => {
 	const [errors, setErrors] = useState("");
 	const [scriptPath, setScriptPath] = useState("");
 	const [files, setFiles] = useState<{ [key: string]: string }>({});
+	const [searchResults, setSearchResults] = useState([]);
 
 	const getFile = async () => {
 		try {
@@ -35,6 +36,25 @@ const App: React.FC = () => {
 		}
 	};
 
+	const searchStackOverflow = async (err: string) => {
+		try {
+			const response = await fetch(
+				`https://api.stackexchange.com/2.3/search?order=desc&sort=activity&tagged=python&intitle=${err}&site=stackoverflow`
+			);
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			const data = await response.json();
+			setSearchResults(data.items.slice(0, 3));
+		} catch (error) {
+			console.error(error);
+		}
+		// useEffect(() => {
+		// 	fetch(`https://api.stackexchange.com/2.3/search?order=desc&sort=activity&tagged=python&intitle=${err}&site=stackoverflow`).then(
+		// 		(response) => setSearchResults(response)
+		// }
+	};
+
 	return (
 		<>
 			<div>
@@ -52,7 +72,27 @@ const App: React.FC = () => {
 						))}
 					</ul>
 				</div>
-				<code>{errors}</code>
+				<div className="errors">
+					<pre>
+						<code className="language-python">{errors}</code>
+						<button onClick={() => searchStackOverflow(errors)}>
+							Search SO
+						</button>
+						<ul>
+							{searchResults.map((result: any, index: number) => (
+								<li key={index}>
+									<a
+										href={result.link}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										{result.title}
+									</a>
+								</li>
+							))}
+						</ul>
+					</pre>
+				</div>
 			</div>
 		</>
 	);
