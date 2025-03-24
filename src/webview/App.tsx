@@ -50,12 +50,6 @@ const App: React.FC = () => {
 				[url]: { ...prevFiles[url], errors: data.errors.toString() },
 			}));
 
-			const simplifiedError = await simplifyError(data.errors.toString());
-			setFiles((prevFiles) => ({
-				...prevFiles,
-				[url]: { ...prevFiles[url], simplifiedError },
-			}));
-
 			setSelectedFile(url);
 		} catch (error) {
 			console.error((error as Error).message);
@@ -90,7 +84,7 @@ const App: React.FC = () => {
 			model: "gemini-2.0-flash",
 		});
 
-		const prompt = `Simply explain the following python error: ${err}`;
+		const prompt = `Provide a simplified explanation for a novice programmer, to the following python error: ${err}. Keep it short`;
 
 		try {
 			const result = await model.generateContent(prompt);
@@ -104,17 +98,19 @@ const App: React.FC = () => {
 
 	const outputSimplifiedError = async () => {
 		// Output the simplified error
-		// const simplifiedError = await simplifyError(errors);
-		// setSimplifiedError(simplifiedError);
 		if (selectedFile && files[selectedFile]?.errors) {
-			const simplifiedError = await simplifyError(files[selectedFile].errors);
-			setFiles((prevFiles) => ({
-				...prevFiles,
-				[selectedFile]: {
-					...prevFiles[selectedFile],
-					simplifiedError: simplifiedError,
-				},
-			}));
+			try {
+				const simplifiedError = await simplifyError(files[selectedFile].errors);
+				setFiles((prevFiles) => ({
+					...prevFiles,
+					[selectedFile]: {
+						...prevFiles[selectedFile],
+						simplifiedError: simplifiedError,
+					},
+				}));
+			} catch (error) {
+				console.error((error as Error).message);
+			}
 		}
 	};
 
