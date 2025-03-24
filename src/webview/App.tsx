@@ -69,7 +69,7 @@ const App: React.FC = () => {
 			model: "gemini-2.0-flash",
 		});
 
-		const prompt = `Simplify the following python error: ${err}`;
+		const prompt = `Simply explain the following python error: ${err}`;
 
 		try {
 			const result = await model.generateContent(prompt);
@@ -92,7 +92,7 @@ const App: React.FC = () => {
 			<div>
 				<h1>Error View</h1>
 				<div className="fileList">
-					<button onClick={getFile}>Get file</button>
+					<button onClick={getFile}>Upload file</button>
 					<ul>
 						{Object.keys(files).map((file) => (
 							<li className="file">
@@ -106,7 +106,7 @@ const App: React.FC = () => {
 				</div>
 				<div className="errors">
 					<pre>
-						<code className="language-python">{errors}</code>
+						<code>{errors}</code>
 					</pre>
 					<div className="btn-wrapper">
 						<button onClick={() => searchStackOverflow(errors)}>
@@ -115,7 +115,7 @@ const App: React.FC = () => {
 						<button onClick={outputSimplifiedError}>Simplify error</button>
 					</div>
 					<pre>
-						<code className="language-python">{simplifiedError}</code>
+						<code>{simplifiedError}</code>
 					</pre>
 					<ul>
 						{searchResults.map((result: any, index: number) => (
