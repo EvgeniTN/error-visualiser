@@ -4,10 +4,13 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const App: React.FC = () => {
 	const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
-	const [errors, setErrors] = useState("");
-	const [files, setFiles] = useState<{ [key: string]: string }>({});
+	// const [errors, setErrors] = useState("");
+	const [files, setFiles] = useState<{
+		[key: string]: { name: string; errors: string; simplifiedError?: string };
+	}>({});
 	const [searchResults, setSearchResults] = useState([]);
-	const [simplifiedError, setSimplifiedError] = useState("");
+	const [selectedFile, setSelectedFile] = useState<string | null>(null);
+	// const [simplifiedError, setSimplifiedError] = useState("");
 
 	const getFile = async () => {
 		let scriptPath = String();
@@ -17,11 +20,17 @@ const App: React.FC = () => {
 			const filePath = await navigator.clipboard.readText();
 			scriptPath = filePath;
 			filename = scriptPath.split("/").at(-1) ?? "";
-			if (scriptPath in files == false || scriptPath != "") {
-				setFiles({ ...files, [scriptPath]: `${filename}` });
+			if (
+				(scriptPath in files == false || scriptPath != "") &&
+				filename.split(".").at(-1) == "py"
+			) {
+				setFiles({
+					...files,
+					[scriptPath]: { name: `${filename}`, errors: "" },
+				});
 			}
 		} catch (error) {
-			setErrors((error as Error).message);
+			console.error((error as Error).message);
 		}
 	};
 
@@ -35,9 +44,21 @@ const App: React.FC = () => {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
 			const data = await response.json();
-			setErrors(data.errors.toString());
+			// setErrors(data.errors.toString());
+			setFiles((prevFiles) => ({
+				...prevFiles,
+				[url]: { ...prevFiles[url], errors: data.errors.toString() },
+			}));
+
+			const simplifiedError = await simplifyError(data.errors.toString());
+			setFiles((prevFiles) => ({
+				...prevFiles,
+				[url]: { ...prevFiles[url], simplifiedError },
+			}));
+
+			setSelectedFile(url);
 		} catch (error) {
-			setErrors((error as Error).message);
+			console.error((error as Error).message);
 		}
 	};
 
@@ -83,8 +104,18 @@ const App: React.FC = () => {
 
 	const outputSimplifiedError = async () => {
 		// Output the simplified error
-		const simplifiedError = await simplifyError(errors);
-		setSimplifiedError(simplifiedError);
+		// const simplifiedError = await simplifyError(errors);
+		// setSimplifiedError(simplifiedError);
+		if (selectedFile && files[selectedFile]?.errors) {
+			const simplifiedError = await simplifyError(files[selectedFile].errors);
+			setFiles((prevFiles) => ({
+				...prevFiles,
+				[selectedFile]: {
+					...prevFiles[selectedFile],
+					simplifiedError: simplifiedError,
+				},
+			}));
+		}
 	};
 
 	return (
@@ -95,9 +126,9 @@ const App: React.FC = () => {
 					<button onClick={getFile}>Upload file</button>
 					<ul>
 						{Object.keys(files).map((file) => (
-							<li className="file">
+							<li className="file" key={file}>
 								<button onClick={() => outputErrors(file)}>
-									{files[file]}
+									{files[file].name}
 								</button>
 								<button>X</button>
 							</li>
@@ -106,16 +137,24 @@ const App: React.FC = () => {
 				</div>
 				<div className="errors">
 					<pre>
-						<code>{errors}</code>
+						<code>{selectedFile ? files[selectedFile]?.errors : ""}</code>
 					</pre>
 					<div className="btn-wrapper">
-						<button onClick={() => searchStackOverflow(errors)}>
+						<button
+							onClick={() =>
+								searchStackOverflow(
+									selectedFile ? files[selectedFile]?.errors : ""
+								)
+							}
+						>
 							Search StackOverflow
 						</button>
 						<button onClick={outputSimplifiedError}>Simplify error</button>
 					</div>
 					<pre>
-						<code>{simplifiedError}</code>
+						<code>
+							{selectedFile ? files[selectedFile]?.simplifiedError : ""}
+						</code>
 					</pre>
 					<ul>
 						{searchResults.map((result: any, index: number) => (
