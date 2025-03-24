@@ -14,12 +14,23 @@ h1 {
 	padding: 1rem;
 }
 
+.btn-wrapper {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	gap: 0.5rem;
+}
+
 button {
 	padding: 0.5rem 2rem;
-	display: block;
 	border: none;
 	background-color: #ff6f00;
 	margin: 0.2rem auto;
+	transition: all ease-in-out 0.3s;
+}
+
+button:hover {
+	background-color: rgb(184, 87, 18);
 }
 
 .errors {

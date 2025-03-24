@@ -42,6 +42,9 @@ export function activate(context: vscode.ExtensionContext) {
 			);
 			const htmlContent = fs.readFileSync(htmlPath.fsPath, "utf8");
 
+			console.log("HTML Path:", htmlPath.fsPath);
+			console.log("HTML Content:", htmlContent);
+
 			// Update the HTML content to use WebView URIs for local resources
 			const scriptUri = panel.webview.asWebviewUri(
 				vscode.Uri.file(path.join(context.extensionPath, "dist", "bundle.js"))
@@ -54,7 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
 					"</head>",
 					`<link href="${styleUri}" rel="stylesheet" /></head>`
 				)
-				.replace("</body>", `<script src="${scriptUri}"></l></body>`);
+				.replace("</body>", `<script src="${scriptUri}"></script></body>`);
 
 			panel.webview.html = updatedHtmlContent;
 		}

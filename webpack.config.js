@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
 	mode: "production",
@@ -27,6 +28,10 @@ module.exports = {
 	plugins: [
 		new HtmlWebpackPlugin({
 			template: "./src/webview/index.html",
+		}),
+		new Dotenv({
+			path: "./.env.production", // Path to your .env file (this is the default)
+			safe: false, // Set to true if you want to load a .env.example file for validation
 		}),
 	],
 };
