@@ -5,20 +5,20 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const App: React.FC = () => {
 	const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
 	const [errors, setErrors] = useState("");
-	const [scriptPath, setScriptPath] = useState("");
 	const [files, setFiles] = useState<{ [key: string]: string }>({});
 	const [searchResults, setSearchResults] = useState([]);
 	const [simplifiedError, setSimplifiedError] = useState("");
 
 	const getFile = async () => {
+		let scriptPath = String();
+		let filename = String();
 		// Get the file path from the clipboard
 		try {
 			const filePath = await navigator.clipboard.readText();
-			setScriptPath(filePath);
-			if (scriptPath in files || scriptPath == "") {
-				return;
-			} else {
-				setFiles({ ...files, [scriptPath]: `${scriptPath} file` });
+			scriptPath = filePath;
+			filename = scriptPath.split("/").at(-1) ?? "";
+			if (scriptPath in files == false || scriptPath != "") {
+				setFiles({ ...files, [scriptPath]: `${filename}` });
 			}
 		} catch (error) {
 			setErrors((error as Error).message);
