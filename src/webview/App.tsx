@@ -3,9 +3,7 @@ import "./styles.css";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const App: React.FC = () => {
-	console.log("here");
 	const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
-	console.log(apiKey);
 	const [errors, setErrors] = useState("");
 	const [scriptPath, setScriptPath] = useState("");
 	const [files, setFiles] = useState<{ [key: string]: string }>({});
@@ -112,7 +110,7 @@ const App: React.FC = () => {
 					</pre>
 					<div className="btn-wrapper">
 						<button onClick={() => searchStackOverflow(errors)}>
-							Search SO
+							Search StackOverflow
 						</button>
 						<button onClick={outputSimplifiedError}>Simplify error</button>
 					</div>
