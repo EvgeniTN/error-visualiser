@@ -8,6 +8,7 @@ const App: React.FC = () => {
 	const [searchResults, setSearchResults] = useState([]);
 
 	const getFile = async () => {
+		// Get the file path from the clipboard
 		try {
 			const filePath = await navigator.clipboard.readText();
 			setScriptPath(filePath);
@@ -22,6 +23,7 @@ const App: React.FC = () => {
 	};
 
 	const outputErrors = async (url: string) => {
+		// Fetch the errors from local server
 		try {
 			const response = await fetch(
 				`http://localhost:3003/run-python?scriptPath=${encodeURIComponent(url)}`
@@ -37,6 +39,7 @@ const App: React.FC = () => {
 	};
 
 	const searchStackOverflow = async (err: string) => {
+		// Search StackOverflow for the error
 		try {
 			const response = await fetch(
 				`https://api.stackexchange.com/2.3/search?order=desc&sort=activity&tagged=python&intitle=${err}&site=stackoverflow`
@@ -49,10 +52,6 @@ const App: React.FC = () => {
 		} catch (error) {
 			console.error(error);
 		}
-		// useEffect(() => {
-		// 	fetch(`https://api.stackexchange.com/2.3/search?order=desc&sort=activity&tagged=python&intitle=${err}&site=stackoverflow`).then(
-		// 		(response) => setSearchResults(response)
-		// }
 	};
 
 	return (
