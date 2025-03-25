@@ -28,7 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
 			const panel = vscode.window.createWebviewPanel(
 				"errorVisualiser",
 				"Error Visualiser",
-				vscode.ViewColumn.One,
+				vscode.ViewColumn.Two,
 				{
 					enableScripts: true,
 					localResourceRoots: [
@@ -63,6 +63,15 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	);
 	context.subscriptions.push(disposable);
+
+	const statusBarItem = vscode.window.createStatusBarItem(
+		vscode.StatusBarAlignment.Right
+	);
+	statusBarItem.text = "Error Visualiser";
+	statusBarItem.tooltip = "Launch Error Visualiser";
+	statusBarItem.command = "error-visualiser.errorView";
+	statusBarItem.show();
+	context.subscriptions.push(statusBarItem);
 }
 
 export function deactivate() {

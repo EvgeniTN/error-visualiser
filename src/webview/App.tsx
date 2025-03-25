@@ -4,18 +4,16 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const App: React.FC = () => {
 	const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
-	// const [errors, setErrors] = useState("");
 	const [files, setFiles] = useState<{
 		[key: string]: { name: string; errors: string; simplifiedError?: string };
 	}>({});
 	const [searchResults, setSearchResults] = useState([]);
 	const [selectedFile, setSelectedFile] = useState<string | null>(null);
-	// const [simplifiedError, setSimplifiedError] = useState("");
 
 	const getFile = async () => {
+		// Get the file path from the clipboard
 		let scriptPath = String();
 		let filename = String();
-		// Get the file path from the clipboard
 		try {
 			const filePath = await navigator.clipboard.readText();
 			scriptPath = filePath;
@@ -44,7 +42,6 @@ const App: React.FC = () => {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
 			const data = await response.json();
-			// setErrors(data.errors.toString());
 			setFiles((prevFiles) => ({
 				...prevFiles,
 				[url]: { ...prevFiles[url], errors: data.errors.toString() },
@@ -58,15 +55,24 @@ const App: React.FC = () => {
 
 	const searchStackOverflow = async (err: string) => {
 		// Search StackOverflow for the error
+		console.log(err.split("Error:").at(-1));
+		//  name 'prin' is not defined. Did you mean: 'print'?
 		try {
 			const response = await fetch(
-				`https://api.stackexchange.com/2.3/search?order=desc&sort=activity&tagged=python&intitle=${err}&site=stackoverflow`
+				`https://api.stackexchange.com/2.3/search?order=desc&sort=activity&tagged=python&intitle=${err
+					.split("Error:")
+					.at(-1)}&site=stackoverflow`
 			);
 			if (!response.ok) {
 				throw new Error(`HTTP error! status: ${response.status}`);
 			}
 			const data = await response.json();
-			setSearchResults(data.items.slice(0, 3));
+			if (data.items && data.items.length > 0) {
+				setSearchResults(data.items.slice(0, 3));
+			} else {
+				console.warn("No results found");
+				setSearchResults([]);
+			}
 		} catch (error) {
 			console.error(error);
 		}
