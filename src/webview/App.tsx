@@ -123,7 +123,7 @@ const App: React.FC = () => {
 		}
 		const generativeAI = new GoogleGenerativeAI(apiKey);
 		const model = generativeAI.getGenerativeModel({
-			model: "gemini-2.0-flash",
+			model: "gemini-2.0-flash-lite",
 		});
 
 		const prompt = `Provide a simplified explanation for a novice programmer, to the following python error: ${err}. Keep it short`;
