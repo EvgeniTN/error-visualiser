@@ -1,4 +1,4 @@
-import React, { use, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./styles.css";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -6,9 +6,45 @@ const App: React.FC = () => {
 	const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
 	const [files, setFiles] = useState<{
 		[key: string]: { name: string; errors: string; simplifiedError?: string };
-	}>({});
-	const [searchResults, setSearchResults] = useState([]);
-	const [selectedFile, setSelectedFile] = useState<string | null>(null);
+	}>(() => {
+		const savedFiles = sessionStorage.getItem("files");
+		return savedFiles ? JSON.parse(savedFiles) : {};
+	});
+	const [searchResults, setSearchResults] = useState<any[]>(() => {
+		const savedResults = sessionStorage.getItem("searchResults");
+		return savedResults ? JSON.parse(savedResults) : [];
+	});
+	const [selectedFile, setSelectedFile] = useState<string | null>(() => {
+		return sessionStorage.getItem("selectedFile");
+	});
+
+	useEffect(() => {
+		sessionStorage.setItem("files", JSON.stringify(files));
+	}, [files]);
+
+	useEffect(() => {
+		sessionStorage.setItem("searchResults", JSON.stringify(searchResults));
+	}, [searchResults]);
+
+	useEffect(() => {
+		if (selectedFile) {
+			sessionStorage.setItem("selectedFile", selectedFile);
+		} else {
+			sessionStorage.removeItem("selectedFile");
+		}
+	}, [selectedFile]);
+
+	useEffect(() => {
+		const handleBeforeUnload = () => {
+			sessionStorage.removeItem("files");
+			sessionStorage.removeItem("searchResults");
+			sessionStorage.removeItem("selectedFile");
+		};
+
+		return () => {
+			window.removeEventListener("beforeunload", handleBeforeUnload);
+		};
+	}, []);
 
 	const getFile = async () => {
 		// Get the file path from the clipboard
@@ -56,7 +92,6 @@ const App: React.FC = () => {
 	const searchStackOverflow = async (err: string) => {
 		// Search StackOverflow for the error
 		console.log(err.split("Error:").at(-1));
-		//  name 'prin' is not defined. Did you mean: 'print'?
 		try {
 			const response = await fetch(
 				`https://api.stackexchange.com/2.3/search?order=desc&sort=activity&tagged=python&intitle=${err
@@ -80,6 +115,7 @@ const App: React.FC = () => {
 
 	async function simplifyError(err: string): Promise<string> {
 		// Use Google's Generative AI to simplify the error
+		console.log(err);
 		if (!apiKey) {
 			throw new Error(
 				"API key is undefined. Please set REACT_APP_GEMINI_API_KEY."
