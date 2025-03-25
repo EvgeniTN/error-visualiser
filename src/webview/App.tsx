@@ -94,7 +94,7 @@ const App: React.FC = () => {
 
 		try {
 			const result = await model.generateContent(prompt);
-			const response = await result.response.text();
+			const response = result.response.text();
 			return response;
 		} catch (error) {
 			console.error(error);
