@@ -168,7 +168,21 @@ const App: React.FC = () => {
 								<button onClick={() => outputErrors(file)}>
 									{files[file].name}
 								</button>
-								<button>X</button>
+								<button
+									className="remove"
+									onClick={() => {
+										setFiles((prevFiles) => {
+											const updatedFiles = { ...prevFiles };
+											delete updatedFiles[file];
+											return updatedFiles;
+										});
+										if (selectedFile === file) {
+											setSelectedFile(null);
+										}
+									}}
+								>
+									X
+								</button>
 							</li>
 						))}
 					</ul>
