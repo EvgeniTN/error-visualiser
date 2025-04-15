@@ -32,9 +32,6 @@
 		"build:webview": "webpack --config webpack.config.js",
 		"build": "webpack"
 	},
-	"jest": {
-		"testEnvironment": "node"
-	},
 	"devDependencies": {
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.3.0",
