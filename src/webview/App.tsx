@@ -113,6 +113,49 @@ const App: React.FC = () => {
 		}
 	};
 
+	async function getArticles(err: string): Promise<string> {
+		// Use Google's Generative AI to get articles
+		console.log(err);
+		if (!apiKey) {
+			throw new Error(
+				"API key is undefined. Please set REACT_APP_GEMINI_API_KEY."
+			);
+		}
+		const generativeAI = new GoogleGenerativeAI(apiKey);
+		const model = generativeAI.getGenerativeModel({
+			model: "gemini-2.0-flash-lite",
+		});
+
+		const prompt = `Provide only 3 links to helpful pages for this python error. DO NOT PROVIDE ANY OTHER TEXT: ${err}. provide only the links, with space between them.`;
+		try {
+			const result = await model.generateContent(prompt);
+			const response = result.response.text();
+			return response;
+		} catch (error) {
+			console.error(error);
+			return "Failed to get articles";
+		}
+	}
+
+	const outputArticles = async () => {
+		// Output the articles
+		if (selectedFile && files[selectedFile]?.errors) {
+			try {
+				const articles = await getArticles(files[selectedFile].errors);
+				console.log(articles);
+				const articlesArray = articles
+					.split(/\s+/)
+					.filter((link) => link.startsWith("http"));
+				setSearchResults((prevResults) => [
+					...prevResults,
+					...articlesArray.map((link) => ({ link, title: link })),
+				]);
+			} catch (error) {
+				console.error((error as Error).message);
+			}
+		}
+	};
+
 	async function simplifyError(err: string): Promise<string> {
 		// Use Google's Generative AI to simplify the error
 		console.log(err);
@@ -192,15 +235,6 @@ const App: React.FC = () => {
 						<code>{selectedFile ? files[selectedFile]?.errors : ""}</code>
 					</pre>
 					<div className="btn-wrapper">
-						<button
-							onClick={() =>
-								searchStackOverflow(
-									selectedFile ? files[selectedFile]?.errors : ""
-								)
-							}
-						>
-							Search StackOverflow
-						</button>
 						<button onClick={outputSimplifiedError}>Simplify error</button>
 					</div>
 					<pre>
@@ -208,6 +242,17 @@ const App: React.FC = () => {
 							{selectedFile ? files[selectedFile]?.simplifiedError : ""}
 						</code>
 					</pre>
+					<button
+						onClick={() => {
+							// searchStackOverflow(
+							// 	selectedFile ? files[selectedFile]?.errors : ""
+							// )
+							outputArticles();
+							console.log(searchResults);
+						}}
+					>
+						Search StackOverflow
+					</button>
 					<ul>
 						{searchResults.map((result: any, index: number) => (
 							<li key={index}>
