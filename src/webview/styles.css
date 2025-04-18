@@ -1,3 +1,7 @@
+:root {
+	--dark-bg: #181818;
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -14,45 +18,12 @@ h1 {
 	padding: 1rem;
 }
 
-.btn-wrapper {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	gap: 0.5rem;
-	padding: 1rem;
-}
-
-button {
-	padding: 0.5rem 2rem;
-	border: none;
-	background-color: #ff6f00;
-	/* margin: 0.2rem auto; */
-	transition: all ease-in-out 0.3s;
-}
-
-button:hover {
-	background-color: rgb(184, 87, 18);
-}
-
-.errors {
-	background-color: #2b2b2b;
-	width: 100%;
-	padding: 1rem;
-}
-
-code {
-	background-color: transparent;
-	margin-top: 1rem;
-	white-space: pre-wrap;
-	border-radius: 5px;
-	width: 100%;
-}
-
 .fileList {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: start;
+	gap: 1rem;
 }
 
 .fileList ul {
@@ -69,13 +40,117 @@ code {
 	flex-wrap: nowrap;
 }
 
-.file button {
-	background-color: transparent;
+.fileList button {
+	border: none;
 	padding: 1rem;
-	background-color: #2b2b2b;
+	background-color: #0000003a;
 	color: white;
 }
 
-.file button:hover {
+.fileList button:hover {
+	background-color: var(--dark-bg);
+}
+
+.fileList .upload {
+	border: 1px solid #ff6f00;
+	color: whitesmoke;
 	background-color: #0000003a;
+}
+
+.fileList .upload:hover {
+	background-color: var(--dark-bg);
+}
+
+.btn-wrapper {
+	margin-top: 0.3rem;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.btn-wrapper button {
+	border: 1px solid #ff6f00;
+	padding: 1rem 4rem;
+	background-color: #0000003a;
+	color: whitesmoke;
+	font-weight: bold;
+
+	transition: all 0.3s ease;
+}
+
+.btn-wrapper button:hover {
+	background-color: var(--dark-bg);
+}
+
+.errors {
+	width: 100%;
+	padding: 1rem;
+}
+
+pre {
+	background-color: var(--dark-bg);
+	padding: 1rem;
+	margin-top: 1rem;
+	width: 100%;
+	border: 1px solid #ff6f00;
+}
+
+code {
+	background-color: transparent;
+	margin-top: 1rem;
+	white-space: pre-wrap;
+	border-radius: 5px;
+	width: 100%;
+}
+
+.articles-wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 1rem;
+	width: 100%;
+}
+
+.articles-wrapper h2 {
+	text-align: start;
+	width: 100%;
+}
+
+.articles-btn-wrapper {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	gap: 1rem;
+	font-weight: bold;
+}
+
+.articles-btn-wrapper button {
+	border: 1px solid #ff6f00;
+	margin-top: 0.3rem;
+	background-color: transparent;
+	padding: 1rem;
+	background-color: #0000003a;
+	color: whitesmoke;
+	font-weight: normal;
+}
+
+.articles-btn-wrapper button:hover {
+	background-color: var(--dark-bg);
+}
+
+.articles {
+	background-color: var(--dark-bg);
+	width: 100%;
+	list-style: none;
+	padding: 1rem;
+}
+
+.articles li {
+	margin: 10px;
+}
+
+.articles li a:hover {
+	color: blueviolet;
 }

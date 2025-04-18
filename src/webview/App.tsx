@@ -109,14 +109,18 @@ const App: React.FC = () => {
 		<div>
 			<h1>Error View</h1>
 			<div className="fileList">
-				<button
-					onClick={() => {
-						getFile();
-					}}
-				>
-					Upload file
-				</button>
 				<ul>
+					<li>
+						<button
+							className="upload"
+							onClick={() => {
+								getFile();
+							}}
+						>
+							Upload file
+						</button>
+					</li>
+
 					{Object.keys(files).map((file) => (
 						<li className="file" key={file}>
 							<button onClick={() => outputErrors(file)}>
@@ -138,40 +142,48 @@ const App: React.FC = () => {
 					))}
 				</ul>
 			</div>
-			<div className="errors">
-				<pre>
-					<code>{selectedFile ? files[selectedFile]?.errors : ""}</code>
-				</pre>
-				<div className="btn-wrapper">
-					<button onClick={outputSimplifiedError}>Simplify error</button>
-				</div>
-				<pre>
-					<code>
-						{selectedFile ? files[selectedFile]?.simplifiedError : ""}
-					</code>
-				</pre>
-				{selectedFile && files[selectedFile]?.isSimplifiedErrorGenerated && (
-					<div className="articles-wrapper">
-						<p>Still stuck?</p>
-						<button onClick={outputArticles}>Browse articles</button>
-						<ul>
-							{files[selectedFile]?.searchResults?.map(
-								(result: SearchResult, index: number) => (
-									<li key={index}>
-										<a
-											href={result.url}
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											{result.title}
-										</a>
-									</li>
-								)
-							)}
-						</ul>
+			{selectedFile && (
+				<div className="errors">
+					<pre>
+						<code>{files[selectedFile]?.errors}</code>
+					</pre>
+					<div className="btn-wrapper">
+						<button onClick={outputSimplifiedError}>Simplify error</button>
 					</div>
-				)}
-			</div>
+					{files[selectedFile]?.isSimplifiedErrorGenerated && (
+						<>
+							<h2>Simplified explanation</h2>
+							<pre>
+								<code>{files[selectedFile]?.simplifiedError}</code>
+							</pre>
+							<div className="articles-wrapper">
+								<div className="articles-btn-wrapper">
+									<p>Still stuck?</p>
+									<button onClick={outputArticles}>Browse articles</button>
+								</div>
+								<h2>Articles</h2>
+								{files[selectedFile]?.searchResults && (
+									<ul className="articles">
+										{files[selectedFile]?.searchResults.map(
+											(result: SearchResult, index: number) => (
+												<li key={index}>
+													<a
+														href={result.title}
+														target="_blank"
+														rel="noopener noreferrer"
+													>
+														{result.title}
+													</a>
+												</li>
+											)
+										)}
+									</ul>
+								)}
+							</div>
+						</>
+					)}
+				</div>
+			)}
 		</div>
 	);
 };
