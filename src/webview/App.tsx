@@ -5,26 +5,26 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const App: React.FC = () => {
 	const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
 	const [files, setFiles] = useState<{
-		[key: string]: { name: string; errors: string; simplifiedError?: string };
+		[key: string]: {
+			name: string;
+			errors: string;
+			simplifiedError?: string;
+			searchResults?: { link: string; title: string }[];
+			isSimplifiedErrorGenerated?: boolean;
+		};
 	}>(() => {
 		const savedFiles = sessionStorage.getItem("files");
 		return savedFiles ? JSON.parse(savedFiles) : {};
 	});
-	const [searchResults, setSearchResults] = useState<any[]>(() => {
-		const savedResults = sessionStorage.getItem("searchResults");
-		return savedResults ? JSON.parse(savedResults) : [];
-	});
 	const [selectedFile, setSelectedFile] = useState<string | null>(() => {
 		return sessionStorage.getItem("selectedFile");
 	});
+	const [isSimplifiedErrorGenerated, setIsSimplifiedErrorGenerated] =
+		useState(false);
 
 	useEffect(() => {
 		sessionStorage.setItem("files", JSON.stringify(files));
 	}, [files]);
-
-	useEffect(() => {
-		sessionStorage.setItem("searchResults", JSON.stringify(searchResults));
-	}, [searchResults]);
 
 	useEffect(() => {
 		if (selectedFile) {
@@ -36,10 +36,10 @@ const App: React.FC = () => {
 
 	useEffect(() => {
 		const handleBeforeUnload = () => {
-			sessionStorage.removeItem("files");
-			sessionStorage.removeItem("searchResults");
 			sessionStorage.removeItem("selectedFile");
 		};
+
+		window.addEventListener("beforeunload", handleBeforeUnload);
 
 		return () => {
 			window.removeEventListener("beforeunload", handleBeforeUnload);
@@ -89,30 +89,6 @@ const App: React.FC = () => {
 		}
 	};
 
-	const searchStackOverflow = async (err: string) => {
-		// Search StackOverflow for the error
-		console.log(err.split("Error:").at(-1));
-		try {
-			const response = await fetch(
-				`https://api.stackexchange.com/2.3/search?order=desc&sort=activity&tagged=python&intitle=${err
-					.split("Error:")
-					.at(-1)}&site=stackoverflow`
-			);
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			const data = await response.json();
-			if (data.items && data.items.length > 0) {
-				setSearchResults(data.items.slice(0, 3));
-			} else {
-				console.warn("No results found");
-				setSearchResults([]);
-			}
-		} catch (error) {
-			console.error(error);
-		}
-	};
-
 	async function getArticles(err: string): Promise<string> {
 		// Use Google's Generative AI to get articles
 		console.log(err);
@@ -146,10 +122,16 @@ const App: React.FC = () => {
 				const articlesArray = articles
 					.split(/\s+/)
 					.filter((link) => link.startsWith("http"));
-				setSearchResults((prevResults) => [
-					...prevResults,
-					...articlesArray.map((link) => ({ link, title: link })),
-				]);
+				setFiles((prevFiles) => ({
+					...prevFiles,
+					[selectedFile]: {
+						...prevFiles[selectedFile],
+						searchResults: articlesArray.map((link) => ({
+							link,
+							title: link,
+						})),
+					},
+				}));
 			} catch (error) {
 				console.error((error as Error).message);
 			}
@@ -191,6 +173,7 @@ const App: React.FC = () => {
 					[selectedFile]: {
 						...prevFiles[selectedFile],
 						simplifiedError: simplifiedError,
+						isSimplifiedErrorGenerated: true,
 					},
 				}));
 			} catch (error) {
@@ -242,26 +225,32 @@ const App: React.FC = () => {
 							{selectedFile ? files[selectedFile]?.simplifiedError : ""}
 						</code>
 					</pre>
-					<button
-						onClick={() => {
-							// searchStackOverflow(
-							// 	selectedFile ? files[selectedFile]?.errors : ""
-							// )
-							outputArticles();
-							console.log(searchResults);
-						}}
-					>
-						Search StackOverflow
-					</button>
-					<ul>
-						{searchResults.map((result: any, index: number) => (
-							<li key={index}>
-								<a href={result.link} target="_blank" rel="noopener noreferrer">
-									{result.title}
-								</a>
-							</li>
-						))}
-					</ul>
+					{selectedFile && files[selectedFile]?.isSimplifiedErrorGenerated && (
+						<div className="articles-wrapper">
+							<p>Still stuck?</p>
+							<button
+								onClick={() => {
+									outputArticles();
+								}}
+							>
+								Browse articles
+							</button>
+							<ul>
+								{selectedFile &&
+									files[selectedFile]?.searchResults?.map((result, index) => (
+										<li key={index}>
+											<a
+												href={result.link}
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												{result.title}
+											</a>
+										</li>
+									))}
+							</ul>
+						</div>
+					)}
 				</div>
 			</div>
 		</>
