@@ -5,9 +5,7 @@ export class GenerativeAIManager {
 
 	constructor(apiKey: string) {
 		if (!apiKey) {
-			throw new Error(
-				"API key is undefined. Please set REACT_APP_GEMINI_API_KEY."
-			);
+			console.log("API key is undefined. Please set REACT_APP_GEMINI_API_KEY.");
 		}
 		this.apiKey = apiKey;
 	}

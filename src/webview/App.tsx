@@ -30,14 +30,11 @@ const App: React.FC = () => {
 
 	const getFile = async () => {
 		try {
-			console.log("Attempting to read from clipboard...");
 			const filePath = await navigator.clipboard.readText();
-			console.log("Clipboard content:", filePath);
 			const filename = filePath.split("/").pop() || "";
 			fileManager.addFile(filePath, filename);
 			const updatedFiles = { ...fileManager.getFiles() }; // Create a new object
 			setFiles(updatedFiles);
-			console.log("Updated files:", updatedFiles);
 		} catch (error) {
 			console.error("Error reading clipboard:", (error as Error).message);
 		}
@@ -115,7 +112,6 @@ const App: React.FC = () => {
 				<button
 					onClick={() => {
 						getFile();
-						console.log("Rendering files:", files);
 					}}
 				>
 					Upload file
