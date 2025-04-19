@@ -18,6 +18,12 @@ h1 {
 	padding: 1rem;
 }
 
+.disclaimer {
+	background-color: darkred;
+	color: white;
+	padding: 1rem;
+}
+
 .fileList {
 	display: flex;
 	flex-direction: row;

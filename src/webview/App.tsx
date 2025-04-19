@@ -107,6 +107,15 @@ const App: React.FC = () => {
 
 	return (
 		<div>
+			<div className="disclaimer">
+				<p>
+					DISCLAIMER: Do not share any sensitive information with the extension.
+					Data is processed externally. To learn more{" "}
+					<a href="https://github.com/EvgeniTN/error-visualiser?tab=readme-ov-file#error-visualiser-readme">
+						click here.
+					</a>
+				</p>
+			</div>
 			<h1>Error View</h1>
 			<div className="fileList">
 				<ul>
