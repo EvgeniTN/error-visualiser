@@ -18,13 +18,34 @@ This is my final year project for my BEng Software Engineering degree. It's a Vi
 3. Create a .env.production file inside the project folder and paste the following code:
    `REACT_APP_GEMINI_API_KEY=REPLACE_WITH_YOUR_API_KEY_HERE`
 
+> You can get your API key for free here: https://ai.google.dev/gemini-api/docs/api-key
+
 4. Build the extension
    `npm run build`
 
 5. Launch the extension
+   Press `F5` or go to `Run > Start Debugging`
 
-## Known Issues
+## How to use
 
-TODO
+1. Once launched the extension can be opened either by navigating to the status bar (bottom right) and pressing on `Launch Error Visualiser`. Alternatively you can press `Ctrl+Shift+p` or `Cmd+Shift+p` if on MacOS, and enter `>errorView`
+
+2. Copy the path to the Python file you would like to load
+
+3. Press the upload file button
+
+4. Press on the Python file which has appeared in the nav bar
+
+5. Press Simplify Error button
+
+6. Press Get Articles button
+
+## Limitations
+
+1. Requires an active internet connection for AI-based features.
+
+## Data Privacy
+
+This extension utilises Google's Generative AI to analyse error message and provide the simplified version and articles. As such sensitive data should not be shared/uploaded to the extension. Ensuring sensitive data is not input in the extension is the responsibility of the user.
 
 **Enjoy!**

@@ -67,7 +67,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const statusBarItem = vscode.window.createStatusBarItem(
 		vscode.StatusBarAlignment.Right
 	);
-	statusBarItem.text = "Error Visualiser";
+	statusBarItem.text = "Launch Error Visualiser";
 	statusBarItem.tooltip = "Launch Error Visualiser";
 	statusBarItem.command = "error-visualiser.errorView";
 	statusBarItem.show();
