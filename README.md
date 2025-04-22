@@ -15,15 +15,19 @@ This is my final year project for my BEng Software Engineering degree. It's a Vi
 2. Install required dependencies
    `npm install`
 
-3. Create a .env.production file inside the project folder and paste the following code:
-   `REACT_APP_GEMINI_API_KEY=REPLACE_WITH_YOUR_API_KEY_HERE`
+   > Node.js must be installed: https://nodejs.org/en/download
+
+3. Insert your API key inside env.production file.
 
 > You can get your API key for free here: https://ai.google.dev/gemini-api/docs/api-key
 
-4. Build the extension
+4. Install webpack locally
+   `npm install --save-dev webpack webpack-cli`
+
+5. Build the extension
    `npm run build`
 
-5. Launch the extension
+6. Launch the extension
    Press `F5` or go to `Run > Start Debugging`
 
 ## How to use
